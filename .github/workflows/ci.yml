@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install backend dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements.txt
+      - name: Run backend smoke tests
+        run: |
+          python - <<'PY'
+          from app import create_app
+          app = create_app()
+          client = app.test_client()
+          resp = client.get('/api/health')
+          assert resp.status_code == 200
+          PY
+        working-directory: backend
+      - name: Build frontend
+        run: |
+          cd frontend && npm install && npm run build

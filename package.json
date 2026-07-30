@@ -1,0 +1,8 @@
+{
+  "name": "banking-app",
+  "private": true,
+  "scripts": {
+    "backend:test": "cd backend && ./.venv/Scripts/python.exe -m unittest discover -s tests -p 'test*.py'",
+    "docker:up": "docker compose up --build"
+  }
+}

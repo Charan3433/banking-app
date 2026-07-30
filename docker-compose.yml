@@ -1,0 +1,40 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: banking-backend
+    env_file:
+      - .env.example
+    ports:
+      - "5000:5000"
+    volumes:
+      - backend-data:/app/data
+      - backend-logs:/app/logs
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/api/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: banking-frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+    volumes:
+      - frontend-build:/usr/share/nginx/html
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  backend-data:
+  backend-logs:
+  frontend-build:
