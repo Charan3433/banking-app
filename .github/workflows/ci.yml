@@ -227,8 +227,11 @@ jobs:
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
           subject: "❌ CI/CD Pipeline Failed - ${{ github.repository }}"
-          to: charan036gunnala@gmail.com
+          to: ${{ secrets.EMAIL_RECIPIENTS }}
           from: ${{ secrets.EMAIL_USERNAME }}
+          reply_to: ${{ secrets.EMAIL_USERNAME }}
+          headers: |
+            Approved: ${{ secrets.EMAIL_USERNAME }}
           body: |
             Pipeline Failure Notification
             
@@ -252,8 +255,11 @@ jobs:
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
           subject: "✅ CI/CD Pipeline Completed Successfully - ${{ github.repository }}"
-          to: charan036gunnala@gmail.com
+          to: ${{ secrets.EMAIL_RECIPIENTS }}
           from: ${{ secrets.EMAIL_USERNAME }}
+          reply_to: ${{ secrets.EMAIL_USERNAME }}
+          headers: |
+            Approved: ${{ secrets.EMAIL_USERNAME }}
           body: |
             Pipeline Success Notification
             
