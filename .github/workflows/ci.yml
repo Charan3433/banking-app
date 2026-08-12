@@ -142,7 +142,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Docker - Build & Push Images
     needs: [backend-build, frontend-build]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push'
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
@@ -181,7 +181,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Local Docker Registry Push
     needs: [backend-build, frontend-build]
-    if: github.event_name != 'pull_request'
+    if: github.event_name == 'push'
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
