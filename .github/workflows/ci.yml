@@ -142,7 +142,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Docker - Build & Push Images
     needs: [backend-build, frontend-build]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push'
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
@@ -176,6 +176,31 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/banking-app-frontend:latest
             ${{ secrets.DOCKER_USERNAME }}/banking-app-frontend:${{ github.sha }}
+
+  local-docker-push:
+    runs-on: ubuntu-latest
+    name: Local Docker Registry Push
+    needs: [backend-build, frontend-build]
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Start local Docker registry
+        run: |
+          docker run -d --rm --name local-registry -p 5000:5000 registry:2
+      - name: Build and push backend to local registry
+        run: |
+          docker build -t localhost:5000/banking-app-backend:${{ github.sha }} backend/
+          docker push localhost:5000/banking-app-backend:${{ github.sha }}
+      - name: Build and push frontend to local registry
+        run: |
+          docker build -t localhost:5000/banking-app-frontend:${{ github.sha }} frontend/
+          docker push localhost:5000/banking-app-frontend:${{ github.sha }}
+      - name: Cleanup local registry
+        if: always()
+        run: |
+          docker stop local-registry || true
 
   integration-tests:
     runs-on: ubuntu-latest

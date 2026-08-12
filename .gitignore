@@ -8,3 +8,8 @@ dist/
 build/
 .vscode/
 backend/logs/
+
+# Terraform local files
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.backup
